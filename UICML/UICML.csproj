@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<PropertyGroup>
+		<!-- If you don't want to provide a ResonitePath in dotnet build, you can specify one here -->
+		<ResonitePath>$(MSBuildThisFileDirectory)Resonite/</ResonitePath>
+		<ResonitePath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite\')">C:\Program Files (x86)\Steam\steamapps\common\Resonite\</ResonitePath>
+		<ResonitePath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Resonite/')">$(HOME)/.steam/steam/steamapps/common/Resonite/</ResonitePath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="0Harmony">
+			<HintPath>$(ResonitePath)\rml_libs\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Common.Logging">
+			<HintPath>$(ResonitePath)\Common.Logging.dll</HintPath>
+		</Reference>
+		<Reference Include="Common.Logging.Core">
+			<HintPath>$(ResonitePath)\Common.Logging.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Assets">
+			<HintPath>$(ResonitePath)\Elements.Assets.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Core">
+			<HintPath>$(ResonitePath)\Elements.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Data">
+			<HintPath>$(ResonitePath)\Elements.Data.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Quantity">
+			<HintPath>$(ResonitePath)\Elements.Quantity.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine.Commands">
+			<HintPath>$(ResonitePath)\FrooxEngine.Commands.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine.GraphicalClient">
+			<HintPath>$(ResonitePath)\FrooxEngine.GraphicalClient.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine.Store">
+			<HintPath>$(ResonitePath)\FrooxEngine.Store.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine.Weaver">
+			<HintPath>$(ResonitePath)\FrooxEngine.Weaver.dll</HintPath>
+		</Reference>
+		<Reference Include="ProtoFlux.Core">
+			<HintPath>$(ResonitePath)\ProtoFlux.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="ProtoFlux.Nodes.Core">
+			<HintPath>$(ResonitePath)\ProtoFlux.Nodes.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="ProtoFlux.Nodes.FrooxEngine">
+			<HintPath>$(ResonitePath)\ProtoFlux.Nodes.FrooxEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="ProtoFluxBindings">
+			<HintPath>$(ResonitePath)\ProtoFluxBindings.dll</HintPath>
+		</Reference>
+		<Reference Include="ResoniteHotReloadLib">
+			<HintPath>$(ResonitePath)\rml_libs\ResoniteHotReloadLib.dll</HintPath>
+		</Reference>
+		<Reference Include="ResoniteModLoader">
+			<HintPath>$(ResonitePath)Libraries\ResoniteModLoader.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="FrooxEngine">
+			<HintPath>$(ResonitePath)FrooxEngine.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+		<PropertyGroup>
+		<!-- Optional: Control copying to rml_libs -->
+		<CopyToLibs Condition="'$(CopyToLibs)'==''">false</CopyToLibs>
+	</PropertyGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(CopyToLibs)'=='true'">
+		<Message Text="Attempting to copy $(TargetFileName) to $(ResonitePath)rml_libs" Importance="high" />
+		<Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ResonitePath)rml_libs" ContinueOnError="true" />
+	</Target>
+</Project>
