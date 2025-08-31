@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<RootNamespace>PowerNite</RootNamespace>
-		<AssemblyName>PowerNite</AssemblyName>
+		<RootNamespace>PowerMASM</RootNamespace>
+		<AssemblyName>PowerMASM</AssemblyName>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<TargetFramework>net9.0</TargetFramework>
 		<AssemblyVersion>1.0.1</AssemblyVersion>
@@ -26,57 +26,58 @@
 
 	</PropertyGroup>
 	<ItemGroup>
-	  <EmbeddedResource Include="PowerNite.Resources\BaseEditor.xml" />
+		<ProjectReference Include="..\UICML\UICML.csproj" />
 	</ItemGroup>
+
 
 	<ItemGroup>
 		<Reference Include="0Harmony">
-		  <HintPath>$(ResonitePath)\rml_libs\0Harmony.dll</HintPath>
+			<HintPath>$(ResonitePath)\rml_libs\0Harmony.dll</HintPath>
 		</Reference>
 		<Reference Include="Common.Logging">
-		  <HintPath>$(ResonitePath)\Common.Logging.dll</HintPath>
+			<HintPath>$(ResonitePath)\Common.Logging.dll</HintPath>
 		</Reference>
 		<Reference Include="Common.Logging.Core">
-		  <HintPath>$(ResonitePath)\Common.Logging.Core.dll</HintPath>
+			<HintPath>$(ResonitePath)\Common.Logging.Core.dll</HintPath>
 		</Reference>
 		<Reference Include="Elements.Assets">
-		  <HintPath>$(ResonitePath)\Elements.Assets.dll</HintPath>
+			<HintPath>$(ResonitePath)\Elements.Assets.dll</HintPath>
 		</Reference>
 		<Reference Include="Elements.Core">
-		  <HintPath>$(ResonitePath)\Elements.Core.dll</HintPath>
+			<HintPath>$(ResonitePath)\Elements.Core.dll</HintPath>
 		</Reference>
 		<Reference Include="Elements.Data">
-		  <HintPath>$(ResonitePath)\Elements.Data.dll</HintPath>
+			<HintPath>$(ResonitePath)\Elements.Data.dll</HintPath>
 		</Reference>
 		<Reference Include="Elements.Quantity">
-		  <HintPath>$(ResonitePath)\Elements.Quantity.dll</HintPath>
+			<HintPath>$(ResonitePath)\Elements.Quantity.dll</HintPath>
 		</Reference>
 		<Reference Include="FrooxEngine.Commands">
-		  <HintPath>$(ResonitePath)\FrooxEngine.Commands.dll</HintPath>
+			<HintPath>$(ResonitePath)\FrooxEngine.Commands.dll</HintPath>
 		</Reference>
 		<Reference Include="FrooxEngine.GraphicalClient">
-		  <HintPath>$(ResonitePath)\FrooxEngine.GraphicalClient.dll</HintPath>
+			<HintPath>$(ResonitePath)\FrooxEngine.GraphicalClient.dll</HintPath>
 		</Reference>
 		<Reference Include="FrooxEngine.Store">
-		  <HintPath>$(ResonitePath)\FrooxEngine.Store.dll</HintPath>
+			<HintPath>$(ResonitePath)\FrooxEngine.Store.dll</HintPath>
 		</Reference>
 		<Reference Include="FrooxEngine.Weaver">
-		  <HintPath>$(ResonitePath)\FrooxEngine.Weaver.dll</HintPath>
+			<HintPath>$(ResonitePath)\FrooxEngine.Weaver.dll</HintPath>
 		</Reference>
 		<Reference Include="ProtoFlux.Core">
-		  <HintPath>$(ResonitePath)\ProtoFlux.Core.dll</HintPath>
+			<HintPath>$(ResonitePath)\ProtoFlux.Core.dll</HintPath>
 		</Reference>
 		<Reference Include="ProtoFlux.Nodes.Core">
-		  <HintPath>$(ResonitePath)\ProtoFlux.Nodes.Core.dll</HintPath>
+			<HintPath>$(ResonitePath)\ProtoFlux.Nodes.Core.dll</HintPath>
 		</Reference>
 		<Reference Include="ProtoFlux.Nodes.FrooxEngine">
-		  <HintPath>$(ResonitePath)\ProtoFlux.Nodes.FrooxEngine.dll</HintPath>
+			<HintPath>$(ResonitePath)\ProtoFlux.Nodes.FrooxEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="ProtoFluxBindings">
-		  <HintPath>$(ResonitePath)\ProtoFluxBindings.dll</HintPath>
+			<HintPath>$(ResonitePath)\ProtoFluxBindings.dll</HintPath>
 		</Reference>
 		<Reference Include="ResoniteHotReloadLib">
-		  <HintPath>$(ResonitePath)\rml_libs\ResoniteHotReloadLib.dll</HintPath>
+			<HintPath>$(ResonitePath)\rml_libs\ResoniteHotReloadLib.dll</HintPath>
 		</Reference>
 		<Reference Include="ResoniteModLoader">
 			<HintPath>$(ResonitePath)Libraries\ResoniteModLoader.dll</HintPath>
@@ -89,17 +90,23 @@
 
 	</ItemGroup>
 
+
+	<ItemGroup>
+		<Folder Include="MASMExtentions\MASMModules\MASMAttributes\" />
+		<Folder Include="Docs\" />
+	</ItemGroup>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(CopyToMods)'=='true'">
 		<Message Text="Attempting to copy $(TargetFileName) to $(ResonitePath)rml_mods" Importance="high" />
 		<Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ResonitePath)rml_mods" ContinueOnError="true" />
 	</Target>
-  <PropertyGroup>
-  <PostBuildEvent Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-    copy /Y "$(AssemblyName).dll" "$(ResonitePath)\rml_mods/HotReloadMods/$(AssemblyName).dll"
-</PostBuildEvent>
-  <PostBuildEvent Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-    cp -f "$(AssemblyName).dll" "$(ResonitePath)/rml_mods/HotReloadMods/$(AssemblyName).dll"
+	<PropertyGroup>
+		<PostBuildEvent Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+			copy /Y "$(AssemblyName).dll" "$(ResonitePath)\rml_mods/HotReloadMods/$(AssemblyName).dll"
+		</PostBuildEvent>
+		<PostBuildEvent Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+			cp -f "$(AssemblyName).dll" "$(ResonitePath)/rml_mods/HotReloadMods/$(AssemblyName).dll"
 
-  </PostBuildEvent>
-</PropertyGroup>
+		</PostBuildEvent>
+	</PropertyGroup>
 </Project>
