@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Test", "PowerMASM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.UIDebugger", "PowerMASM.UIDebugger\PowerMASM.UIDebugger.csproj", "{060FE5E4-8C69-433D-8ACA-BB09F814FA05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Core", "PowerMASM.Core\PowerMASM.Core.csproj", "{B52C5D30-0471-48DB-BA42-1952BADB46AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{060FE5E4-8C69-433D-8ACA-BB09F814FA05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{060FE5E4-8C69-433D-8ACA-BB09F814FA05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{060FE5E4-8C69-433D-8ACA-BB09F814FA05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

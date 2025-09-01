@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PowerMASM;
-using PowerMASM.MASM;
+
 namespace PowerMASM.UIDebugger
 {
     /// <summary>
