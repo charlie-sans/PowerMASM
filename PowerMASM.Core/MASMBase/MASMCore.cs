@@ -20,6 +20,11 @@ public class MASMCore {
 
 	public Dictionary<MASMAcessorModifiers.AccessorModifier, List<MASMLabel>> Label_Modifiers { get; set; } = new();
 
+	public void Run()
+	{
+		Console.WriteLine("meow");
+	}
+
 	public MASMCore PreProcess(string code) {
 		// Split code into lines, trim whitespace, and remove comments
 		var lines = code.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)

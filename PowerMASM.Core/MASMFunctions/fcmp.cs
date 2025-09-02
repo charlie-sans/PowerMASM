@@ -8,11 +8,11 @@ using PowerMASM.Core.Interfaces;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class fcmp : ICallable {
-	public string Name => throw new NotImplementedException();
+	public string Name => "fcmp";
 
 	public int ParameterCount => throw new NotImplementedException();
 
-	public void Call(MicroAsmVmState state, params object[] parameters) {
+	public static void Call(MicroAsmVmState state, params object[] parameters) {
 		throw new NotImplementedException();
 	}
 }

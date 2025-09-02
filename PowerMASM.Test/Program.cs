@@ -1,6 +1,7 @@
 ﻿using System;
 using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
+using PowerMASM.Core.MASMFunctions;
 namespace PowerMASM.Test
 {
     public class Program
@@ -34,25 +35,11 @@ namespace PowerMASM.Test
         }
         public static void TestMoveCallable()
         {
-            ICallable moveCallable;
-            try
-            {
-                moveCallable = callableCollector.GetCallableByName("mov");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error retrieving Move callable: {ex.Message}");
-                return;
-            }
-            Console.WriteLine("Testing Move Callable...");
-            if (moveCallable == null)
-            {
-                Console.WriteLine("Move callable not found.");
-                return;
-            }
-            Console.WriteLine($"Testing Move callable: {moveCallable.Name} with {moveCallable.ParameterCount} parameters.");
             vmState.Reset();
-            moveCallable.Call(vmState, "EAX", 5);
+
+            mov.Call(vmState, "RAX", 5);
+            var raxValue = vmState.GetIntRegister("RAX");
+            Console.WriteLine($"RAX after mov: {raxValue} (expected 5)");
         }
     }
 }

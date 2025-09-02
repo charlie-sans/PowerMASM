@@ -12,7 +12,7 @@ public class Out : ICallable {
 
 	public int ParameterCount => throw new NotImplementedException();
 
-	public void Call(MicroAsmVmState state, params object[] parameters) {
+	public static void Call(MicroAsmVmState state, params object[] parameters) {
 		var IOOutput = int.Parse((string)parameters[0]); // should be int or string
 														 // user can output to 0 = stdout, 1 = stderr
 		if (IOOutput == 0) {

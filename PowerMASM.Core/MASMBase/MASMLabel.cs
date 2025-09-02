@@ -8,5 +8,5 @@ namespace PowerMASM.Core.MASMBase;
 public class MASMLabel {
 	public string Name { get; set; } = null;
 	public string[] Instructions { get; set; } = null;
-	public MASMAcessorModifiers[] modifiers { get; set; } = null;
+	public MASMAcessorModifiers.ObjectiveModifiers? modifiers { get; set; } = null;
 }
