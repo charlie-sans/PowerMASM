@@ -7,45 +7,98 @@ using System.Threading.Tasks;
 using PowerMASM.Core;
 
 namespace PowerMASM.Core.MASMBase;
-public class MASMCore {
-	public List<string> Instructions { get; set; } = null;
-	public MASMLabel[] Labels { get; set; } = null;
-	private MicroAsmVmState _state { get; set; } = null;
-	public MASMCore(bool? create = true) {
-		if (create == true) {
-			_state = new MicroAsmVmState();
-		
-		}
-	}
+public class MASMCore
+{
+    public List<string> Instructions { get; set; } = null;
+    public MASMLabel[] Labels { get; set; } = null;
+    private MicroAsmVmState _state { get; set; } = null;
+    private static MASMCore _coreSelf { get; set; } = null;
+    public MASMCore(bool? create = true)
+    {
+        if (create == true)
+        {
+            _state = new MicroAsmVmState();
+        }
+        _coreSelf = this; // reference to self, hopefully...
+    }
 
-	public Dictionary<MASMAcessorModifiers.AccessorModifier, List<MASMLabel>> Label_Modifiers { get; set; } = new();
 
-	public void Run()
-	{
-		Console.WriteLine("meow");
-	}
+    public void Run()
+    {
+        Console.WriteLine("meow");
+    }
 
-	public MASMCore PreProcess(string code) {
-		// Split code into lines, trim whitespace, and remove comments
-		var lines = code.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-						.Select(line => line.Trim())
-						.Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith(";")) // Remove comments and empty lines
-						.ToArray();
+    public static MASMCore PreProcess(string code)
+    {
+        // Split code into lines, trim whitespace, and remove comments
+        var lines = code.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(line => line.Trim())
+                        .Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith(";")) // Remove comments and empty lines
+                        .ToArray();
 
-		var labels = new List<MASMLabel>();
-		var instructions = new List<string>();
-		
-		/*
-		 * #include "somefile.mas" ; local
-		 * #include <somefile.mas> ; global from include paths
-		 *  lbl main
-		 *		mov RAX 0 ; stdout
-		 *		mov RBX 100 ; value
-		 *		call #printf ; defined in include file
-		 *		; optional ret here
-		 *		
-		 */
+        var labels = new List<MASMLabel>();
+        var globalInstructions = new List<string>();
+        MASMLabel currentLabel = null;
+        List<string> currentInstructions = null;
 
-		return null;
-	}
+        for (int i = 0; i < lines.Length; i++)
+        {
+            var line = lines[i];
+            if (line.StartsWith("#include", StringComparison.OrdinalIgnoreCase))
+            {
+                string domainBaseDir = AppDomain.CurrentDomain.BaseDirectory;
+                var start = line.IndexOf('"') != -1 ? line.IndexOf('"') : line.IndexOf('<');
+                var end = line.IndexOf('"', start + 1) != -1 ? line.IndexOf('"', start + 1) : line.IndexOf('>', start + 1);
+                if (start != -1 && end != -1 && end > start)
+                {
+                    var includePath = line.Substring(start + 1, end - start - 1).Replace('.', System.IO.Path.DirectorySeparatorChar);
+                    var fullPath = System.IO.Path.Combine(domainBaseDir, includePath);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        var includedCode = System.IO.File.ReadAllText(fullPath);
+                        var includedCore = PreProcess(includedCode);
+                        if (includedCore.Labels != null)
+                            labels.AddRange(includedCore.Labels);
+                        if (includedCore.Instructions != null)
+                            globalInstructions.AddRange(includedCore.Instructions);
+                    }
+                }
+            }
+            else if (line.EndsWith(":") || line.StartsWith("lbl ", StringComparison.OrdinalIgnoreCase))
+            {
+                // Save previous label if exists
+                if (currentLabel != null)
+                {
+                    currentLabel.Instructions = currentInstructions?.ToArray();
+                    labels.Add(currentLabel);
+                }
+                string labelName;
+                if (line.EndsWith(":"))
+                    labelName = line.TrimEnd(':').Trim();
+                else
+                    labelName = line.Substring(4).Trim(); // after "lbl "
+                currentLabel = new MASMLabel { Name = labelName, Instructions = null, modifiers = null };
+                currentInstructions = new List<string>();
+            }
+            else // Regular instruction
+            {
+                if (currentLabel != null)
+                    currentInstructions.Add(line);
+                else
+                    globalInstructions.Add(line);
+            }
+        }
+        // Add last label if exists
+        if (currentLabel != null)
+        {
+            currentLabel.Instructions = currentInstructions?.ToArray();
+            labels.Add(currentLabel);
+        }
+        _coreSelf = new MASMCore(false)
+        {
+            Labels = labels.Count > 0 ? labels.ToArray() : null,
+            Instructions = globalInstructions.Count > 0 ? globalInstructions : null
+        };
+        return _coreSelf;
+    }
 }

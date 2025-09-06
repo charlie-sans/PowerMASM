@@ -14,8 +14,9 @@ public class add : ICallable {
 	public int ParameterCount => 2;
 
 	public void Call(MicroAsmVmState state, params object[] parameters) {
-		var dest = parameters[0].AsRegister(state);
-		var src = parameters[1].AsRegister(state);
-		dest += src;
+	var destName = parameters[0] as string;
+	var destVal = parameters[0].AsRegister(state);
+	var srcVal = parameters[1].AsRegister(state);
+	state.SetIntRegister(destName, destVal + srcVal);
 	}
 }

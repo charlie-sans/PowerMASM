@@ -7,12 +7,13 @@ using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
 
 namespace PowerMASM.Core.MASMFunctions;
-public class mul: ICallable {
-	public string Name => throw new NotImplementedException();
-
-	public int ParameterCount => throw new NotImplementedException();
-
+public class mul : ICallable {
+	public string Name => "mul";
+	public int ParameterCount => 2;
 	public void Call(MicroAsmVmState state, params object[] parameters) {
-		throw new NotImplementedException();
+		var destName = parameters[0] as string;
+		var destVal = parameters[0].AsRegister(state);
+		var srcVal = parameters[1].AsRegister(state);
+		state.SetIntRegister(destName, destVal * srcVal);
 	}
 }

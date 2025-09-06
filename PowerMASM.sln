@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.UIDebugger", "Pow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Core", "PowerMASM.Core\PowerMASM.Core.csproj", "{B52C5D30-0471-48DB-BA42-1952BADB46AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Web.Tests", "PowerMASM.Web.Tests\PowerMASM.Web.Tests.csproj", "{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Web.Runtime", "PowerMASM.Web.Tests\PowerMASM.Web.Runtime.csproj", "{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

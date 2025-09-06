@@ -7,12 +7,14 @@ using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
 
 namespace PowerMASM.Core.MASMFunctions;
-public class div: ICallable {
-	public string Name => throw new NotImplementedException();
-
-	public int ParameterCount => throw new NotImplementedException();
-
+public class div : ICallable {
+	public string Name => "div";
+	public int ParameterCount => 2;
 	public void Call(MicroAsmVmState state, params object[] parameters) {
-		throw new NotImplementedException();
+		var destName = parameters[0] as string;
+		var destVal = parameters[0].AsRegister(state);
+		var srcVal = parameters[1].AsRegister(state);
+		if (srcVal == 0) throw new DivideByZeroException("Division by zero in div instruction");
+		state.SetIntRegister(destName, destVal / srcVal);
 	}
 }
