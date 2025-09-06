@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using PowerMASM.Core;
 
 namespace PowerMASM.Core.MASMExtentions;
-static class ObjectExtentions {
+public static class ObjectExtentions {
 	public static string GetTypeName(object obj) {
 		if (obj == null) return "null";
 		return obj.GetType().Name;
