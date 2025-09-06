@@ -25,7 +25,32 @@ public class MASMCore
 
     public void Run()
     {
-        Console.WriteLine("meow");
+        if (_state == null)
+            _state = new MicroAsmVmState();
+        _state.Exceptions.Clear();
+        var instructions = Instructions ?? new List<string>();
+        var collector = new PowerMASM.Core.Interfaces.ICallableCollector();
+        collector.Collect();
+        for (int i = 0; i < instructions.Count; i++)
+        {
+            var instr = instructions[i];
+            try
+            {
+                var parts = instr.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 0) continue;
+                var name = parts[0];
+                var callable = collector.GetCallableByName(name);
+                var paramCount = callable.ParameterCount;
+                if (parts.Length - 1 < paramCount)
+                    throw new Exception($"Instruction '{name}' expects {paramCount} parameters, got {parts.Length - 1}.");
+                var parameters = parts.Skip(1).Take(paramCount).ToArray();
+                callable.Call(_state, parameters);
+            }
+            catch (Exception ex)
+            {
+                _state.Exceptions.Add(new PowerMASM.Core.MASMException.MASMException($"Error at instruction {i}: {instr}", i, instr, ex));
+            }
+        }
     }
 
     public static MASMCore PreProcess(string code)
