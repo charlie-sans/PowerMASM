@@ -27,4 +27,18 @@ public class MASMLabelTests
         Assert.Single(label.Instructions);
         Assert.Equal("mov rax 1", label.Instructions[0]);
     }
+    [Fact]
+    public void MASMLabel_CanSerialiselabels()
+    {
+        var label = new MASMLabel
+        {
+            Name = "start",
+            Instructions = new[] { "mov rax 1" },
+        };
+        var serialized = System.Text.Json.JsonSerializer.Serialize(label);
+        Console.WriteLine(serialized);
+
+        Assert.Contains("\"Name\":\"start\"", serialized);
+        Assert.Contains("\"Instructions\":[\"mov rax 1\"]", serialized);
+    }
 }

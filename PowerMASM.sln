@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34728.123
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11010.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UICML", "UICML\UICML.csproj", "{291E84B5-8DCD-74F0-0F7C-A45041CB28B3}"
 EndProject
@@ -19,7 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.UIDebugger", "Pow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Core", "PowerMASM.Core\PowerMASM.Core.csproj", "{B52C5D30-0471-48DB-BA42-1952BADB46AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Web.Runtime", "PowerMASM.Web.Tests\PowerMASM.Web.Runtime.csproj", "{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Web.Runtime", "PowerMASM.Web.Runtime\PowerMASM.Web.Runtime.csproj", "{83A45500-E451-AB12-23F1-18D47B62A9F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Runtime", "PowerMASM.Runtime\PowerMASM.Runtime.csproj", "{233D2BDA-9451-4D09-87FE-8AEA54834422}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +53,14 @@ Global
 		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B52C5D30-0471-48DB-BA42-1952BADB46AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A38CFB7-D74A-4752-BF4F-26CA8E53158A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83A45500-E451-AB12-23F1-18D47B62A9F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83A45500-E451-AB12-23F1-18D47B62A9F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83A45500-E451-AB12-23F1-18D47B62A9F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83A45500-E451-AB12-23F1-18D47B62A9F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

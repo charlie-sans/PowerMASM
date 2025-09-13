@@ -15,7 +15,7 @@ public interface ICallable
     /// </summary>
     /// <param name="state">the current state of the MASM Runtime</param>
     /// <param name="parameters">Params that was passed to the ICallable</param>
-	static void Call(MicroAsmVmState state, params object[] parameters) { }
+	 void Call(MicroAsmVmState state, params object[] parameters) { }
 
     string ToString() => Name;
 }
