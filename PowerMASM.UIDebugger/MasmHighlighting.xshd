@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="MicroASM" extensions=".masm">
+  <Color name="Keyword" foreground="#FF61AFEF" fontWeight="bold" />
+  <Color name="Register" foreground="#FFD19A66" />
+  <Color name="Label" foreground="#FF98C379" />
+  <Color name="Comment" foreground="#FF5C6370" />
+  <Color name="Number" foreground="#FFD19A66" />
+  <Color name="String" foreground="#FFE5C07B" />
+
+  <RuleSet ignoreCase="true">
+    <!-- Keywords: instructions from MicroV2.md -->
+    <Keywords color="Keyword">
+      MOV MOVZX MOVSX ADD SUB MUL DIV INC DEC JMP CMP JE JNE JZ JNZ JS JNS JC JNC JB JNAE JAE JNB JO JNO JG JNLE JL JNGE JGE JNL JLE JNG CALL RET PUSH POP IN OUT COUT HLT EXIT ARGC GETARG LBL MALLOC FREE DB DW DD DQ DF DDbl RESB RESW RESD RESQ RESF RESDbl MACRO ENDMACRO SCOPE ENDSCOPE STATE FMOV FADD FSUB FMUL FDIV FCMP CVTSI2SD CVTUI2SD CVTSD2SI CVTSD2UI CVTSS2SD CVTSD2SS FJE FJNE FJLT FJLE FJGT FJGE FJUO AND OR XOR NOT SHL SHR SAR MOVADDR MOVTO COPY FILL CMP_MEM SYSCALL ENTER LEAVE
+    </Keywords>
+    <!-- Registers -->
+    <Span color="Register" begin="\b(RAX|RBX|RCX|RDX|RSI|RDI|RBP|RSP|RIP|R[0-9]{1,2}|FPR[0-9]{1,2})\b" end="" />
+    <!-- Labels -->
+    <Span color="Label" begin="#\w+" end="" />
+    <!-- Comments -->
+    <Span color="Comment" begin=";" end="$" />
+    <!-- Numbers -->
+    <Span color="Number" begin="\b(0x[0-9A-Fa-f]+|[0-9]+)\b" end="" />
+    <!-- Strings -->
+    <Span color="String" begin="\"" end="\"" />
+  </RuleSet>
+</SyntaxDefinition>
