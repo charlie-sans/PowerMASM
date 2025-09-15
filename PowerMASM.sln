@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Web.Runtime", "Po
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Runtime", "PowerMASM.Runtime\PowerMASM.Runtime.csproj", "{233D2BDA-9451-4D09-87FE-8AEA54834422}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerMASM.Lisp", "PowerMASM.Lisp\PowerMASM.Lisp.csproj", "{8A2C0F50-3F07-40BC-BB76-A8088BBC1027}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{233D2BDA-9451-4D09-87FE-8AEA54834422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A2C0F50-3F07-40BC-BB76-A8088BBC1027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A2C0F50-3F07-40BC-BB76-A8088BBC1027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A2C0F50-3F07-40BC-BB76-A8088BBC1027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A2C0F50-3F07-40BC-BB76-A8088BBC1027}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

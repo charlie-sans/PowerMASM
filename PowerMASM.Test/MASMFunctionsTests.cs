@@ -11,7 +11,7 @@ public class MASMFunctionsTests
     public void Mov_SetsRegisterValue()
     {
         var state = new MicroAsmVmState();
-        mov.Call(state, "RAX", 42);
+        new mov().Call(state, "RAX", 42);
         Assert.Equal(42, state.GetIntRegister("RAX"));
     }
 
@@ -19,8 +19,8 @@ public class MASMFunctionsTests
     public void Add_AddsRegisterValues()
     {
         var state = new MicroAsmVmState();
-        mov.Call(state, "RAX", 10);
-        mov.Call(state, "RBX", 5);
+        new mov().Call(state, "RAX", 10);
+        new mov().Call(state, "RBX", 5);
         var addFunc = new add();
         addFunc.Call(state, "RAX", "RBX");
         Assert.Equal(15, state.GetIntRegister("RAX"));

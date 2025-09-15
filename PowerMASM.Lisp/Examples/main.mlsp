@@ -1,0 +1,11 @@
+(lbl main
+    (hello: db "Hello, World!", 0)
+    (out 1 hello) ;; standard masm code to print "Hello, World!" to the console
+    (cmp RAX RBX 
+        (JEInvoke Console::WriteLine, "You entered an empty string!") ;; if length is 0, print this message.
+    )
+)
+(lbl meow
+    (out 1 hello)
+    (ret)
+)

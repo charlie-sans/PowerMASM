@@ -13,4 +13,10 @@
     <ProjectReference Include="..\PowerMASM.Core\PowerMASM.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="program.masm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
+using PowerMASM.Core.MASMExtentions;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class mul : ICallable {

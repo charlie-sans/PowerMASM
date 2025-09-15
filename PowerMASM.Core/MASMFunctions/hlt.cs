@@ -8,11 +8,11 @@ using PowerMASM.Core.Interfaces;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class hlt: ICallable {
-	public string Name => throw new NotImplementedException();
+	public string Name => "hlt";
 
-	public int ParameterCount => throw new NotImplementedException();
+	public int ParameterCount => 0;
 
 	public void Call(MicroAsmVmState state, params object[] parameters) {
-		throw new NotImplementedException();
+		// do nothing, it's a stub anyways.
 	}
 }

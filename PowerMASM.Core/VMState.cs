@@ -32,7 +32,7 @@ public class MicroAsmVmState {
 	// Floating-point registers (64-bit double)
 	public double[] _floatRegisters = new double[16];
 	// Flags register 
-	public ProcessorFlags Flags { get; set; }
+	public ProcessorFlags Flags { get; set; } = new ProcessorFlags();
 	// Memory (simulated as byte array or Memory<byte>)
 	public Memory<byte> Memory { get; set; }
 	// Stack pointer (RSP) and base pointer (RBP) are just indices into _intRegisters

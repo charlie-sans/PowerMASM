@@ -7,22 +7,27 @@ using System.Threading.Tasks;
 
 namespace PowerMASM.Core.Interfaces;
 public class ICallableCollector {
-	public List<ICallable> Callables { get; set; } = new();
+	public List<ICallable> Callables { get; } = new();
 	public ICallableCollector() { }
 	public List<string> GetCallableNames() => Callables.Select(c => c.Name).ToList();
 	public ICallable GetCallableByName(string name)
 	{
-		// better debugging info
-		List<ICallable> callables = null;
-		try
-		{
-			callables = Callables.Where(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine();
-			//throw new Exception($"Error while searching for callable '{name}': {ex.Message}", ex);
-		}
+		var lowerName = name.ToLower();
+		var callables = Callables
+			.Where(c =>
+			{
+				try
+				{
+					return c != null && c.Name != null && c.Name.ToLower().Equals(lowerName, StringComparison.OrdinalIgnoreCase);
+				}
+				catch
+				{
+					// Skip this callable if any exception occurs (e.g., NotImplementedException)
+					return false;
+				}
+			})
+			.ToList();
+
 		if (callables.Count == 0)
 		{
 			throw new Exception($"No callable found with the name '{name}'.");

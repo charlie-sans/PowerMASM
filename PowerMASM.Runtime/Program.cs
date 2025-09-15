@@ -1,36 +1,41 @@
-﻿using PowerMASM.Core.MASMBase;
-namespace PowerMASM.Runtime;
-public class Program {
-    public static void Main(string[] args) {
-        Console.WriteLine("PowerMASM Runtime Environment");
+﻿using System;
+using System.IO;
+using PowerMASM.Core.MASMBase;
+using PowerMASM.Core.Runtime;
 
-
-        MASMLabel label = new MASMLabel()
+namespace PowerMASM.Runtime
+{
+    public class Program
+    {
+        public static void Main(string[] args)
         {
-            Name = "example",
-            Instructions = new[] { "mov rax 1", "add rax 2" },
-            modifiers = new MASMAcessorModifiers.ObjectiveModifiers
+            Console.WriteLine("PowerMASM Runtime Environment");
+
+            string filePath = args.Length > 0 ? args[0] : "program.masm";
+            if (!File.Exists(filePath))
             {
-                IsPointer = false,
-                IsReference = false,
-                IsArray = false,
-                ArraySize = 0,
-                IsFunction = true,
-                ReturnType = "int",
-                Parameters = new List<string> { "int a", "int b" },
-                Modifiers = new List<MASMAcessorModifiers.AccessorModifier>
-                {
-                    MASMAcessorModifiers.AccessorModifier.Public,
-                    MASMAcessorModifiers.AccessorModifier.Static
-                }
+                Console.WriteLine($"File not found: {filePath}");
+                return;
             }
-        };
 
+            string code = File.ReadAllText(filePath);
+            var masmCore = MASMCore.PreProcess(code);
 
-        Console.WriteLine($"Label Name: {label.Name}");
-        Console.WriteLine($"Instructions: {string.Join(", ", label.Instructions)}");
-        // serialise to JSON
-        var serialized = System.Text.Json.JsonSerializer.Serialize(label);
-        Console.WriteLine(serialized);
+            var vm = new VM(32768);
+            vm.Program = masmCore;
+            vm.LoadProgram(null);
+
+            if (vm.State.Exceptions.Count > 0)
+            {
+                Console.WriteLine("Errors during execution:");
+                foreach (var ex in vm.State.Exceptions)
+                    Console.WriteLine(ex);
+            }
+            else
+            {
+                Console.WriteLine("Program executed successfully.");
+                Console.WriteLine(vm.State);
+            }
+        }
     }
 }

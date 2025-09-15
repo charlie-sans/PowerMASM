@@ -11,19 +11,29 @@ namespace PowerMASM.Core.MASMFunctions;
 
 public class mov : ICallable
 {
-    public string Name => "mov";
-
+    public string Name => "MOV";
     public int ParameterCount => 2;
 
-    public static void Call(MicroAsmVmState state, params object[] parameters)
+    public void Call(MicroAsmVmState state, params object[] parameters)
     {
-        var dest = parameters[0];
-        var src = parameters[1] switch
-        {
-            int i => i,
-            string s => s.AsRegister(state),
-            _ => throw new ArgumentException("Invalid parameter type for mov")
-        };
-        state.SetIntRegister((string)dest, src);
+        if (parameters.Length != 2)
+            throw new ArgumentException("MOV requires 2 parameters");
+
+        var dest = parameters[0].ToString();
+        var src = parameters[1].ToString();
+
+        // Try register first, then immediate
+        long value;
+        if (state._intRegisterMap.TryGetValue(src, out var srcIdx))
+            value = state._intRegisters[srcIdx];
+        else if (long.TryParse(src, out var imm))
+            value = imm;
+        else
+            throw new ArgumentException($"Unknown MOV source: {src}");
+
+        if (!state._intRegisterMap.TryGetValue(dest, out var destIdx))
+            throw new ArgumentException($"Unknown MOV destination: {dest}");
+
+        state._intRegisters[destIdx] = value;
     }
 }

@@ -1,0 +1,10 @@
+lbl main
+    hello: DB "hello, world!", 0
+    mov RAX 1
+    mov RBX 100
+    out 1 hello
+    out 2 10
+    out 2 13
+    out 2 hello
+    ;; should print these.....
+    hlt
