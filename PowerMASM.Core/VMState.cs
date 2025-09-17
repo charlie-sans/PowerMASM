@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PowerMASM.Core.MASMBase;
 using PowerMASM.Core.Reflection;
+using PowerMASM.Core.Runtime;
 
 namespace PowerMASM.Core;
 public class ProcessorFlags {
@@ -31,8 +32,15 @@ public class MicroAsmVmState {
 	public long[] _intRegisters = new long[32];
 	// Floating-point registers (64-bit double)
 	public double[] _floatRegisters = new double[16];
-	// Flags register 
-	public ProcessorFlags Flags { get; set; } = new ProcessorFlags();
+
+    // Console input
+	public ConsoleInWrapper ConsoleIn { get; set; } = new ConsoleInWrapper();
+
+	// Console Output
+	public ConsoleOutWrapper ConsoleOut { get; set; } = new ConsoleOutWrapper();
+
+    // Flags register 
+    public ProcessorFlags Flags { get; set; } = new ProcessorFlags();
 	// Memory (simulated as byte array or Memory<byte>)
 	public Memory<byte> Memory { get; set; }
 	// Stack pointer (RSP) and base pointer (RBP) are just indices into _intRegisters

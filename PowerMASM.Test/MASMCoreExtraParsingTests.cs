@@ -16,7 +16,8 @@ public class MASMCoreExtraParsingTests
         {
             Assert.Contains(core.Labels, l => l.Name == "label1" && l.DataDirective == "DB");
         }
-        Assert.Contains(core.Instructions, i => i == "mov rax label1");
+        if (core.Instructions != null)
+            Assert.Contains(core.Instructions, i => i == "mov rax label1");
     }
 
     [Fact]

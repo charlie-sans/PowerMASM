@@ -30,6 +30,24 @@ public class mov : ICallable
             value = imm;
         else
             throw new ArgumentException($"Unknown MOV source: {src}");
+        if (dest == null)
+            throw new ArgumentException("MOV destination cannot be null");
+        // if the dest or src is $<address>, handle as memory address
+        if (dest.StartsWith("$"))
+        {
+            var addrStr = dest.Substring(1);
+            if (long.TryParse(addrStr, out var addr))
+            {
+                if (addr < 0 || addr + 8 > state.Memory.Length)
+                    throw new ArgumentOutOfRangeException($"Memory address out of range: {addr}");
+                BitConverter.GetBytes(value).CopyTo(state.Memory.Span.Slice((int)addr, 8));
+                return;
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid memory address: {addrStr}");
+            }
+        }
 
         if (!state._intRegisterMap.TryGetValue(dest, out var destIdx))
             throw new ArgumentException($"Unknown MOV destination: {dest}");

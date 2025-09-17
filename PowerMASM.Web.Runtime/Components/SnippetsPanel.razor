@@ -1,0 +1,35 @@
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Snippets</h5>
+        <ul class="list-group">
+            @foreach (var snippet in Snippets)
+            {
+                <li class="list-group-item list-group-item-action" style="cursor:pointer;" @onclick="() => OnSnippetClick(snippet)">
+                    <pre class="mb-0">@snippet.Title</pre>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    public class Snippet
+    {
+        public string Title { get; set; } = "";
+        public string Code { get; set; } = "";
+    }
+
+    [Parameter] public EventCallback<string> SnippetSelected { get; set; }
+
+    private List<Snippet> Snippets = new()
+    {
+        new Snippet { Title = "Hello World", Code = "MOV AX, 1\nINT 21h" },
+        new Snippet { Title = "Loop Example", Code = "MOV CX, 10\nLOOP label" },
+        new Snippet { Title = "Add Two Numbers", Code = "MOV AX, 5\nADD AX, 3" }
+    };
+
+    private async Task OnSnippetClick(Snippet snippet)
+    {
+        await SnippetSelected.InvokeAsync(snippet.Code);
+    }
+}

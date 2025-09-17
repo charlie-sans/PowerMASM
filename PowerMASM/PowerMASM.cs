@@ -18,59 +18,23 @@ namespace PowerMASM;
 // More info on creating mods can be found https://github.com/resonite-modding-group/ResoniteModLoader/wiki/Creating-Mods
 public class PowerMASMMod : ResoniteMod
 {
-    internal const string VERSION_CONSTANT = "1.0.0";
-    public override string Name => "PowerMASM";
-    public override string Author => "Finite";
-    public override string Version => VERSION_CONSTANT;
-    public override string Link => "https://git.finite.ovh/PowerNite";
+	public override string Name => "PowerMASM";
+	public override string Author => "ExampleAuthor";
+	public override string Version => "1.0.0";
+	public override string Link => "https://github.com/resonite-modding-group/ExampleMod/";
 
-	public static string Domain = "ovh.finite.PowerMASM";
-	public static PowerMASMMod INSTANCE { get; private set; }
-	public static void Msg(string msg)
-	{
-		Console.WriteLine($"[{INSTANCE.Name}] {msg}");
+	public override void OnEngineInit() {
+		Harmony harmony = new("com.example.ExampleMod");
+		harmony.PatchAll();
 	}
-	public static void Debug(string msg) {
-		Console.WriteLine($"[{INSTANCE.Name} Debug] {msg}");
-	}
-
-    public static void BeforeHotReload()
-    {
-		Harmony harm = new Harmony(Domain);
-		harm.UnpatchAll(Domain);
-		HotReloader.RemoveMenuOption("PowerMASM", "Create MASMEditor");
-
-	}
-
-
-public static void OnHotReload(ResoniteMod modInstance)
+	public static void BeforeHotReload()
     {
 
-	
-		Console.WriteLine($"[{modInstance.Name}] Hot Reloaded");
-		Setup();
-		Console.WriteLine($"[{modInstance.Name}] Hot Reload Setup Complete");
-		//Msg("PowerMASM Hot Reloaded");
 	}
 
-    public override void OnEngineInit()
+
+	public static void OnHotReload(ResoniteMod modInstance)
     {
-        // Assign the static instance field
-        INSTANCE = this;
-
-        HotReloader.RegisterForHotReload(this);
-        Setup();
-		Debug($"{Name} OnEngineInit Complete");
-	}
-
-	public static void Setup() {
-		AddNewMenuOption("PowerMASM", "Create MASMEditor", () =>
-		{
-			UIXMLParser parser = new UIXMLParser();
-			parser.Render("<canvas height=\"800\"></canvas>");
-			parser.RootSlot.Name = "MASMEditor";
-			parser.RootSlot.PositionInFrontOfUser(float3.Backward, new float3(0,0,-2f));
-		});
 	}
 
 	public static void AddNewMenuOption(string path, string name, Action reloadAction)

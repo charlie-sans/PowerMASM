@@ -29,7 +29,17 @@ public class VM
     public override string ToString() => State.ToString();
     public void Reset() => State = new MicroAsmVmState(State.Memory.Length);
 
-    // Helper to split data values on commas, ignoring commas inside quotes
+    /// <summary>
+    /// Splits a delimited string into a list of values, using commas as separators and ignoring commas that appear
+    /// within double quotes.Helper to split data values on commas, ignoring commas inside quotes
+    /// </summary>
+    /// <remarks>This method does not remove surrounding quotes from values. Empty values between consecutive
+    /// commas are returned as empty strings. Useful for parsing CSV-like data where quoted fields may contain
+    /// commas.</remarks>
+    /// <param name="input">The input string containing comma-separated values. Commas inside double quotes are treated as part of the value
+    /// and not as delimiters.</param>
+    /// <returns>A list of strings representing the separated values from the input. Each value is trimmed of leading and
+    /// trailing whitespace.</returns>
     private static List<string> SplitDataValues(string input)
     {
         var result = new List<string>();
@@ -58,8 +68,11 @@ public class VM
         return result;
     }
 
-    public void LoadProgram(string[]? program)
+    public void LoadProgram(string[]? program = null, ConsoleInWrapper? _in = null, ConsoleOutWrapper? _out = null )
     {
+        State.ConsoleIn = _in ?? null;
+        State.ConsoleOut = _out ?? null;
+
         // --- Data label memory layout ---
         if (Program?.Labels != null)
         {
@@ -68,6 +81,7 @@ public class VM
             {
                 if (!string.IsNullOrEmpty(label.DataDirective) && !string.IsNullOrEmpty(label.DataValues))
                 {
+                    int labelStartAddr = dataPtr; // Store the starting address before writing data
                     // Parse data values and write to memory
                     var values = SplitDataValues(label.DataValues);
                     if (label.DataDirective == "DB")
@@ -138,12 +152,10 @@ public class VM
                         var labelCopy = new MASMLabel {
                             Name = label.Name,
                             DataDirective = label.DataDirective,
-                            DataValues = label.DataValues,
+                            DataValues = labelStartAddr.ToString(), // Use the starting address
                             Instructions = label.Instructions,
                             modifiers = label.modifiers
                         };
-                        // Use DataValues to store address as string for now
-                        labelCopy.DataValues = dataPtr.ToString();
                         State.Labels.Add(labelCopy);
                     }
                 }
@@ -168,11 +180,14 @@ public class VM
 
     public void ExecuteInstructions(string[] instructions)
     {
+        if (State.ConsoleOut != null)
+        {
+            State.ConsoleOut.WriteLine("Starting execution...");
+        }
         int ip = 0;
         while (ip < instructions.Length)
         {
             var line = instructions[ip].Trim();
-            
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith(";"))
             {
                 ip++;
@@ -189,6 +204,8 @@ public class VM
             catch (Exception ex)
             {
                 State.Exceptions.Add(new MASMException.MASMException($"Error executing '{line}': {ex.Message}", ip, line, ex));
+                if (State.ConsoleOut != null)
+                    State.ConsoleOut.WriteLine($"Error executing '{line}': {ex.Message}");
                 break;
             }
             ip++;

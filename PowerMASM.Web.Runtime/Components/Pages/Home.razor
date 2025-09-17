@@ -1,0 +1,31 @@
+﻿@page "/"
+@using Blazor.AceEditorJs
+@rendermode InteractiveServer
+
+<PageTitle>Micro-Assembly Editor</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <SnippetsPanel SnippetSelected="OnSnippetSelected" />
+        </div>
+        <div class="col-md-8">
+            <EditorPanel CurrentCode="" CurrentCodeChanged="OnCodeChanged" Opt="opt" />
+        </div>
+    </div>
+</div>
+
+@code {
+    private string currentcode { get; set; } = "";
+    AceEditorOptions opt = new() { IsReadOnly = false, Language = AceLanguage.assembly_x86, Theme = AceTheme.dracula };
+
+    private void OnSnippetSelected(string code)
+    {
+        currentcode = code;
+    }
+
+    private void OnCodeChanged(string code)
+    {
+        currentcode = code;
+    }
+}

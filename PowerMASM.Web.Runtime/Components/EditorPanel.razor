@@ -1,0 +1,82 @@
+@using Blazor.AceEditorJs
+@using PowerMASM.Core.MASMBase
+@using PowerMASM.Core.Runtime
+
+
+<div class="card mb-3">
+    <div class="card-body">
+        <AceJsEditor Style="height:300px; width:100%; border-radius:6px;" @bind-Value="CurrentCode" Options="Opt" />
+        <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-primary" @onclick="RunCode">Run</button>
+        </div>
+        @if (!string.IsNullOrEmpty(Output))
+        {
+            <div class="alert alert-info mt-3">
+                @((MarkupString)Output)
+            </div>
+        }
+        <div class="mt-4">
+            <h5>Terminal</h5>
+            <div class="terminal-output bg-dark text-light p-2 mb-2" style="height:150px; overflow-y:auto; border-radius:6px;">
+                @foreach (var line in TerminalOutput)
+                {
+                    <div>@line</div>
+                }
+            </div>
+            <form @onsubmit="OnTerminalInput">
+                <div class="input-group">
+                    <input class="form-control" type="text" @bind="TerminalInput" placeholder="Enter command..." />
+                    <button class="btn btn-secondary" type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string CurrentCode { get; set; } = "";
+    [Parameter] public EventCallback<string> CurrentCodeChanged { get; set; }
+    [Parameter] public AceEditorOptions Opt { get; set; } = new() { IsReadOnly = false, Language = AceLanguage.assembly_x86, Theme = AceTheme.dracula };
+    private string Output = string.Empty;
+
+    private ConsoleOutWrapper consoleOut = new();
+    private ConsoleInWrapper consoleIn = new();
+    private List<string> TerminalOutput = new();
+    private string TerminalInput = string.Empty;
+    private VM vm;
+
+    private async Task RunCode()
+    {
+        var masmCore = MASMCore.PreProcess(CurrentCode);
+        vm = new VM(32768);
+        vm.Program = masmCore;
+        vm.LoadProgram(null, consoleIn,consoleOut);
+        Console.SetOut(consoleOut);
+        TerminalOutput.Clear();
+        TerminalOutput.AddRange();
+
+        if (vm.State.Exceptions.Count > 0)
+        {
+            Output = "Errors during execution:<br/>" + string.Join("<br/>", vm.State.Exceptions.Select(e => e.ToString())) + "<br/>" + vm.State.ToString();
+        }
+        else
+        {
+            Output = "Program executed successfully.<br/>" + vm.State.ToString();
+            Output += "<br/>Console Output:<br/>" + string.Join("<br/>", consoleOut.Output);
+
+        }
+        await CurrentCodeChanged.InvokeAsync(CurrentCode);
+    }
+
+    private async Task OnTerminalInput()
+    {
+        if (vm == null || string.IsNullOrWhiteSpace(TerminalInput))
+            return;
+        consoleIn.PushInput(TerminalInput);
+        TerminalOutput.Add($"> {TerminalInput}");
+
+        TerminalOutput.AddRange(consoleOut.Output.Skip(TerminalOutput.Count));
+        TerminalInput = string.Empty;
+        await InvokeAsync(StateHasChanged);
+    }
+}

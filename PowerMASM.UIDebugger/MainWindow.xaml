@@ -48,61 +48,62 @@
                         <local:MasmEditor x:Name="Editor" Grid.Row="1" Margin="1,10,10,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinHeight="300" MinWidth="250"/>
                     </Grid>
                 </Border>
-            
-            <!-- Right: Registers/Stack (top) and Output Log (bottom) -->
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <!-- Top: Registers and Stack side by side -->
-                <Grid Grid.Row="0" Margin="0,0,0,5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.2*"/>
-                        <ColumnDefinition Width="0.8*"/>
-                    </Grid.ColumnDefinitions>
-                    <!-- Registers -->
-                    <Border Grid.Column="0" Margin="0,0,5,0" CornerRadius="8" Background="#23272E" BorderBrush="#3C4048" BorderThickness="1">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Registers" Foreground="#98C379" FontWeight="Bold" Margin="10,10,0,0"/>
-                            <DataGrid x:Name="RegisterGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" MinHeight="120" MaxHeight="200" Background="#23272E" Foreground="#D7DAE0" BorderBrush="#3C4048" BorderThickness="1" Margin="10,10,10,10">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Register" Binding="{Binding Name}" Width="*"/>
-                                    <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </Border>
-                    <!-- Stack -->
-                    <Border Grid.Column="1" Margin="5,0,0,0" CornerRadius="8" Background="#23272E" BorderBrush="#3C4048" BorderThickness="1">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Stack" Foreground="#E06C75" FontWeight="Bold" Margin="10,10,0,0"/>
-                            <DataGrid x:Name="StackGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" MinHeight="80" MaxHeight="140" Background="#23272E" Foreground="#D7DAE0" BorderBrush="#3C4048" BorderThickness="1" Margin="10,10,10,10">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="*"/>
-                                    <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
+
+                <!-- Right: Registers/Stack (top) and Output Log (bottom) -->
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Top: Registers and Stack side by side -->
+                    <Grid Grid.Row="0" Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.2*"/>
+                            <ColumnDefinition Width="0.8*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Registers -->
+                        <Border Grid.Column="0" Margin="0,0,5,0" CornerRadius="8" Background="#23272E" BorderBrush="#3C4048" BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Registers" Foreground="#98C379" FontWeight="Bold" Margin="10,10,0,0"/>
+                                <DataGrid x:Name="RegisterGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" MinHeight="120" MaxHeight="200" Background="#23272E" Foreground="#D7DAE0" BorderBrush="#3C4048" BorderThickness="1" Margin="10,10,10,10">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Register" Binding="{Binding Name}" Width="*"/>
+                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+                        <!-- Stack -->
+                        <Border Grid.Column="1" Margin="5,0,0,0" CornerRadius="8" Background="#23272E" BorderBrush="#3C4048" BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Stack" Foreground="#E06C75" FontWeight="Bold" Margin="10,10,0,0"/>
+                                <DataGrid x:Name="StackGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" MinHeight="80" MaxHeight="140" Background="#23272E" Foreground="#D7DAE0" BorderBrush="#3C4048" BorderThickness="1" Margin="10,10,10,10">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="*"/>
+                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <!-- Bottom: Output Log -->
+                    <Border Grid.Row="1" Margin="0,5,0,0" CornerRadius="8" Background="#282C34" BorderBrush="#3C4048" BorderThickness="1" MinHeight="120">
+                        <DockPanel>
+                            <TextBlock Text="Output Log" Foreground="#E5C07B" FontWeight="Bold" Margin="10,10,0,0"/>
+                            <ScrollViewer Margin="10,40,10,10">
+                                <TextBlock x:Name="Output" TextWrapping="Wrap" Foreground="#D7DAE0"/>
+                            </ScrollViewer>
+                        </DockPanel>
                     </Border>
                 </Grid>
-                <!-- Bottom: Output Log -->
-                <Border Grid.Row="1" Margin="0,5,0,0" CornerRadius="8" Background="#282C34" BorderBrush="#3C4048" BorderThickness="1" MinHeight="120">
-                    <DockPanel>
-                        <TextBlock Text="Output Log" Foreground="#E5C07B" FontWeight="Bold" Margin="10,10,0,0"/>
-                        <ScrollViewer Margin="10,40,10,10">
-                            <TextBlock x:Name="Output" TextWrapping="Wrap" Foreground="#D7DAE0"/>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
             </Grid>
         </Grid>
         <!-- Bottom Status Bar -->

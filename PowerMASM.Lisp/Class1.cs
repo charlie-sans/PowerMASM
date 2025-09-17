@@ -5,7 +5,10 @@
     /// </summary>
     public class Program
     {
-
+        public static void main(string[] args)
+        {
+            System.Console.WriteLine("PowerMASM.Lisp");
+        }
     }
 
     public class LispEngine

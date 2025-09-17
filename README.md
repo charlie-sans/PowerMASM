@@ -1,14 +1,58 @@
-# ExampleMod
+# PowerMASM
 
-A [ResoniteModLoader](https://github.com/resonite-modding-group/ResoniteModLoader) mod for [Resonite](https://resonite.com/) that does something.
-<!-- Edit to describe what your mod does and what it may solve -->
-<!-- If your mod solves an issue, you should link to any relevant issues on the resonite github -->
+**PowerMASM** is a powerful assembler and interactive micro-assembly editor for the Micro-Assembly CPU lineup. It features a modern Blazor web interface, advanced macro system, and robust error reporting.
 
+## Features
+- Supports all Micro-Assembly CPU instructions and directives
+- Powerful macro system for reusable code
+- Advanced optimization techniques for efficient code generation
+- User-friendly syntax and error reporting
+- Interactive web-based editor with syntax highlighting (Ace Editor)
+- Snippets panel for quick code insertion
+- Extensible architecture (.NET 9)
 
-## Screenshots
-<!-- If your mod has visible effects in the game, attach some images or video of it in-use here! Otherwise remove this section -->
+## Getting Started
 
-## Installation
-1. Install [ResoniteModLoader](https://github.com/resonite-modding-group/ResoniteModLoader).
-1. Place [ExampleModName.dll](https://github.com/YourGithubUsername/YourModRepoName/releases/latest/download/ExampleModName.dll) into your `rml_mods` folder. This folder should be at `C:\Program Files (x86)\Steam\steamapps\common\Resonite\rml_mods` for a default install. You can create it if it's missing, or if you launch the game once with ResoniteModLoader installed it will create this folder for you.
-1. Start the game. If you want to verify that the mod is working you can check your Resonite logs.
+### Prerequisites
+- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- Modern web browser (if using the web editor))
+
+### Running the Web Editor
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/charlie-sans/PowerMASM.git
+   cd PowerMASM
+   ```
+2. Build and run the Blazor web project:
+   ```sh
+   dotnet run --project PowerMASM.Web.Runtime
+   ```
+3. Open your browser and navigate to `http://localhost:5000` (or the port shown in the console).
+
+### Using the Editor
+- Write micro-assembly code in the editor panel.
+- Use the snippets panel to insert common code patterns.
+- Click **Run** to assemble and execute your code.
+- View output and error messages below the editor.
+
+## Project Structure
+- `PowerMASM.Core` – Core assembler logic and CPU definitions
+- `PowerMASM.Web.Runtime` – Blazor web editor and runtime
+- `PowerMASM.Runtime` – Execution engine for micro-assembly programs
+- `PowerMASM.UIDebugger` – Debugging tools (optional)
+- `PowerMASM.Test` – Unit tests
+- `PowerMASM.Extensions` – Additional language extensions
+- `PowerMASM.Lisp` – Lisp integration (optional)
+- `UICML` – UI components and markup language
+
+## License
+This project is licensed under the [GNU GPL v3](LICENSE.txt).
+
+## Contributing
+Contributions are welcome!
+Please open issues or pull requests for bug fixes, features, or documentation improvements.
+
+## Contact
+For questions or support, open an issue on GitHub or contact the maintainer.
+
