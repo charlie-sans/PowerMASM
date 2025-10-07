@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
 using PowerMASM.Core.MASMExtentions;
+using PowerMASM.Core.Runtime;
 
 namespace PowerMASM.Core.MASMFunctions;
 
@@ -22,64 +23,22 @@ public class mov : ICallable
         var dest = parameters[0].ToString();
         var src = parameters[1].ToString();
 
-        long value = 0;
-        bool valueAssigned = false;
+        // Use VM.ResolveOperandValue for source value
+        long value = VM.ResolveOperandValue(state, src);
 
-        // Try register first, then immediate
-        if (state._intRegisterMap.TryGetValue(src, out var srcIdx))
+        // If dest is a register
+        if (state._intRegisterMap.ContainsKey(dest))
         {
-            value = state._intRegisters[srcIdx];
-            valueAssigned = true;
+            state.SetIntRegister(dest, value);
+            return;
         }
-        else if (long.TryParse(src, out var imm))
+        // If dest is a memory address (e.g., $1234, $RAX, $[RBP+4])
+        else if (dest.StartsWith("$"))
         {
-            value = imm;
-            valueAssigned = true;
+            long addr = VM.ResolveOperandValue(state, dest);
+            BitConverter.GetBytes(value).CopyTo(state.Memory.Span.Slice((int)addr, 8));
+            return;
         }
-
-        if (src.StartsWith("$"))
-        {
-            var addrStr = src.Substring(1);
-            if (long.TryParse(addrStr, out var addr))
-            {
-                if (addr < 0 || addr + 8 > state.Memory.Length)
-                    throw new ArgumentOutOfRangeException($"Memory address out of range: {addr}");
-                value = BitConverter.ToInt64(state.Memory.Span.Slice((int)addr, 8));
-                valueAssigned = true;
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid memory address: {addrStr}");
-            }
-        }
-
-        if (dest == null)
-            throw new ArgumentException("MOV destination cannot be null");
-        // if the dest or src is $<address>, handle as memory address
-        if (dest.StartsWith("$"))
-        {
-            var addrStr = dest.Substring(1);
-            if (long.TryParse(addrStr, out var addr))
-            {
-                if (addr < 0 || addr + 8 > state.Memory.Length)
-                    throw new ArgumentOutOfRangeException($"Memory address out of range: {addr}");
-                if (!valueAssigned)
-                    throw new ArgumentException("MOV source value is not assigned");
-                BitConverter.GetBytes(value).CopyTo(state.Memory.Span.Slice((int)addr, 8));
-                return;
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid memory address: {addrStr}");
-            }
-        }
-
-        if (!state._intRegisterMap.TryGetValue(dest, out var destIdx))
-            throw new ArgumentException($"Unknown MOV destination: {dest}");
-
-        if (!valueAssigned)
-            throw new ArgumentException("MOV source value is not assigned");
-
-        state._intRegisters[destIdx] = value;
+        throw new ArgumentException($"Unknown MOV destination: {dest}");
     }
 }

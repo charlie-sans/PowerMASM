@@ -9,7 +9,7 @@ namespace PowerMASM.Core.MetaLamaExtentions
 {
     public class Debugging
     {
-        public bool EnableDebugging { get; set; } = true;
+        public static bool EnableDebugging { get; set; } = true;
         public static Debugging DebuggerInstance { get; set; }
         public Debugging() {
             EnableDebugging = false;
@@ -104,7 +104,7 @@ namespace PowerMASM.Core.MetaLamaExtentions
         {
             try
             {
-                if (Debugging.GetDebuggingInstance().EnableDebugging)
+                if (Debugging.EnableDebugging)
                 {
                     Console.WriteLine($"Entering method: {meta.Target.Method.Name}");
                     var result = meta.Proceed();

@@ -7,6 +7,7 @@ using PowerMASM.Core;
 using PowerMASM.Core.MASMBase;
 using PowerMASM.Core.Interfaces;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace PowerMASM.Core.Runtime;
 public class VM
@@ -55,6 +56,10 @@ public class VM
                 inQuotes = !inQuotes;
                 sb.Append(c);
             }
+            //if (c == ';')
+            //{
+            //    continue; // Ignore comments
+            //}
             // Split on comma or space, but only outside quotes
             else if ((c == ',' || c == ' ') && !inQuotes)
             {
@@ -83,7 +88,7 @@ public class VM
         // --- Data label memory layout ---
         if (Program?.Labels != null)
         {
-            int dataPtr = 0x1000; // Start data at offset 0x1000 (arbitrary, after code)
+            int dataPtr = 0x1000; // Start data at offset 0x1000 (arbitrary, after code) should really make this based on memory size and code size
             foreach (var label in Program.Labels)
             {
                 if (!string.IsNullOrEmpty(label.DataDirective) && !string.IsNullOrEmpty(label.DataValues))
@@ -199,7 +204,10 @@ public class VM
         {
             State.ConsoleOut.WriteLine("Starting execution...");
         }
-
+        // we gotta set RBP to the top of the memory for stack operations
+        State.SetIntRegister("RBP", State.Memory.Length -16);
+        // Set RSP to the top of the memory (stack grows downward)
+        State.SetIntRegister("RSP", State.Memory.Length -16);
         // Debug: print total instructions
         Debug.WriteLine($"Total instructions: {instructions.Length}");
 
@@ -286,5 +294,54 @@ public class VM
         }
         ExecuteInstructions(func.Instructions);
         return State.GetIntRegister("RAX");
+    }
+
+    /// <summary>
+    /// Resolves an operand string to its value from registers or memory.
+    /// Supports: register names (RAX), direct memory (1234), indirect ($RAX), offset ([RBP+4]), computed ($[RBP+4])
+    /// </summary>
+    public static long ResolveOperandValue(MicroAsmVmState state, string operand)
+    {
+        operand = operand.Trim();
+        // Register (e.g., RAX)
+        if (state._intRegisterMap.ContainsKey(operand))
+            return state.GetIntRegister(operand);
+        // Indirect register (e.g., $RAX)
+        if (operand.StartsWith("$") && state._intRegisterMap.ContainsKey(operand.Substring(1)))
+        {
+            var addr = state.GetIntRegister(operand.Substring(1));
+            return BitConverter.ToInt64(state.Memory.Span.Slice((int)addr, 8));
+        }
+        // Offset (e.g., [RBP+4])
+        var offsetMatch = Regex.Match(operand, @"\[(\w+)([+-]\d+)?\]");
+        if (offsetMatch.Success)
+        {
+            var reg = offsetMatch.Groups[1].Value;
+            var offset = offsetMatch.Groups[2].Success ? int.Parse(offsetMatch.Groups[2].Value) : 0;
+            var baseAddr = state.GetIntRegister(reg);
+            var addr = baseAddr + offset;
+            if (addr < 0 || addr + 8 > state.Memory.Length)
+                throw new IndexOutOfRangeException($"Memory access out of bounds at address {addr}");
+            return BitConverter.ToInt64(state.Memory.Span.Slice((int)addr, 8));
+        }
+        // Computed memory address (e.g., $[RBP+4])
+        var computedMatch = Regex.Match(operand, @"\$\[(\w+)([+-]\d+)?\]");
+        if (computedMatch.Success)
+        {
+            var reg = computedMatch.Groups[1].Value;
+            var offset = computedMatch.Groups[2].Success ? int.Parse(computedMatch.Groups[2].Value) : 0;
+            var baseAddr = state.GetIntRegister(reg);
+            var addr = baseAddr + offset;
+            return BitConverter.ToInt64(state.Memory.Span.Slice((int)addr, 8));
+        }
+        // Direct memory address with $ (e.g., $1234)
+        if (operand.StartsWith("$") && int.TryParse(operand.Substring(1), out var addrs))
+        {
+            return BitConverter.ToInt64(state.Memory.Span.Slice(addrs, 8));
+        }
+        // Number literal
+        if (long.TryParse(operand, out var num))
+            return num;
+        throw new ArgumentException($"Unknown operand format: {operand}");
     }
 }

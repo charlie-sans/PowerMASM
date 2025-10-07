@@ -41,10 +41,11 @@ public class MASMCore
     public static MASMCore PreProcess(string code)
     {
         // Split code into lines, trim whitespace, and remove comments
-        var lines = code.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(line => line.Trim())
-                        .Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith(";")) // Remove comments and empty lines
-                        .ToArray();
+        var lines = code
+            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Split(';')[0].Trim()) // Remove comments
+            .Where(line => !string.IsNullOrWhiteSpace(line)) // Remove empty lines
+            .ToArray();
 
         var labels = new List<MASMLabel>();
         var globalInstructions = new List<string>();

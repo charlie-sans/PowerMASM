@@ -8,11 +8,22 @@ using PowerMASM.Core.Interfaces;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class leave : ICallable {
-	public string Name => throw new NotImplementedException();
+	public string Name => "LEAVE";
 
-	public int ParameterCount => throw new NotImplementedException();
+	public int ParameterCount => 1;
 
-	[MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
-		throw new NotImplementedException();
-	}
+	[MetaLamaExtentions.IDebuggable]
+    public void Call(MicroAsmVmState state, params object[] parameters)
+    {
+        state.CallStack.PopLabelFrame();
+        long rbp = state.GetIntRegister("RBP");
+        if (rbp < 0 || rbp + 8 > state.Memory.Length)
+        {
+            throw new InvalidOperationException("Stack underflow when performing LEAVE");
+        }
+        // Restore old RBP
+        long oldRbp = BitConverter.ToInt64(state.Memory.Span.Slice((int)rbp, 8));
+        state.SetIntRegister("RSP", rbp);
+        state.SetIntRegister("RBP", oldRbp);
+    }
 }

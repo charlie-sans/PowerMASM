@@ -5,7 +5,7 @@ using PowerMASM.Core.MASMExtentions;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class JeqInstruction : ICallable {
-	public string Name => "JEQ";
+	public string Name => "JE";
 
 	public int ParameterCount => 1;
 	string ICallable.ToString() => Name;

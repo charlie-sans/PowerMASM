@@ -10,6 +10,7 @@ public class CallInstruction : ICallable {
     string ICallable.ToString() => Name;
 
     [MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
+        state.CallStack.PushLabelFrame(Name, state.GetIntRegister("RIP"));
         if (parameters.Length != 1) {
             throw new ArgumentException("CALL requires exactly one parameter");
         }

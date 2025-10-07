@@ -54,8 +54,9 @@ public class MicroAsmVmState {
 	// Register name to index mappings
 	public Dictionary<string, int> _intRegisterMap = null!;
 	public Dictionary<string, int> _floatRegisterMap = null!;
+	
 
-	public MicroAsmVmState(int memorySize = 65536) {
+    public MicroAsmVmState(int memorySize = 65536) {
 		Memory = new byte[memorySize].AsMemory();
 		InitializeRegisterMaps();
 		// Initialize RSP to end of memory (stack grows downward)

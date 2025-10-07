@@ -1,5 +1,110 @@
+; void print_hex(int num)
+db $2000 "0123456789ABCDEF" ; hex_digits
+lbl print_hex
+enter 4
+    ; num = $[rbp+8]
+    mov $[rbp-4] 0 ; print digits
+    mov rax 28 ; sizeof(int)*8 - 4
+    lbl print_hex.for
+
+        mov rbx $[rbp+8]
+        shr rbx rax
+        and rbx 15 ; 0xf
+        add $[rbp-4] rbx
+        cmp $[rbp-4] 0
+        je #print_hex.continue
+        add rbx 2000
+        cout 1 $rbx ; hex_digits
+        ; out 1 rbx
+    lbl print_hex.continue
+    sub rax 4
+    cmp rax 0
+    jge #print_hex.for
+    mov rbx $[rbp-4]
+    cmp rbx 0
+    jne #print_hex.ret
+    out 1 0
+    lbl print_hex.ret
+leave
+ret
+
+; void printf(char* str, void* args)
+lbl printf
+enter 8 ; one byte for state
+; str      = $[rbp+8]
+; args     = $[rbp+12]
+
+    mov $[rbp-4] 0 ; state = NORMAL
+    mov $[rbp-8] $[rbp+12]
+    mov rax $[rbp+8]
+
+    lbl printf.loop
+        movb rbx $rax
+
+        cmp $[rbp-4] 1 ; if (state != PARSE) jmp
+        jne #printf.NORMAL
+            cmp rbx 100
+            je #printf.d_char
+            cmp rbx 120
+            je #printf.x_char
+            cmp rbx 37
+            je #printf.percent_char
+            jmp #printf.switch_end
+
+            lbl printf.d_char
+                push rcx
+                mov rcx $[rbp-8]
+                mov rcx $rcx
+                out 1 rcx
+                add $[rbp-8] 4
+                pop rcx
+                jmp #printf.switch_end
+
+            lbl printf.x_char
+                push rcx
+                mov rcx $[rbp-8]
+                mov rcx $rcx
+                push rax ; push regs
+                push rbx
+
+                push rcx
+                call #print_hex
+                pop rcx ; restore stack
+
+                pop rbx ; restore regs
+                pop rax
+                add $[rbp-8] 4
+                pop rcx
+                jmp #printf.switch_end
+
+            lbl printf.percent_char
+                cout 1 37
+                jmp #printf.switch_end
+
+            lbl printf.switch_end
+                mov $[rbp-4] 0 ; state = NORMAL
+                jmp #printf.end
+
+        lbl printf.NORMAL
+            cmp rbx 37 ; '%'
+            jne #printf.not_percent
+                mov $[rbp-4] 1 ; state = PARSE
+                jmp #printf.end
+            lbl printf.not_percent
+                cout 1 rbx
+        lbl printf.end
+            add rax 1
+            cmp $rax 0
+            jne #printf.loop
+leave
+ret
+
 lbl main
-    mov RAX 1
+    mov RAX 200
     mov RBX 100
     DB $100 "meow\n"
-    out 1 $100
+    DB $200 "%s"
+    push RAX
+    push RBX
+    call #printf
+    hlt

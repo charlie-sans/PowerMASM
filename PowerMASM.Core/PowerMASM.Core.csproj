@@ -8,9 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MASMExtentions\MASMModules\MASMAttributes\**" />
+    <EmbeddedResource Remove="MASMExtentions\MASMModules\MASMAttributes\**" />
+    <None Remove="MASMExtentions\MASMModules\MASMAttributes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Documentation\MNI\" />
     <Folder Include="Documentation\Instructions\" />
-    <Folder Include="MASMExtentions\MASMModules\MASMAttributes\" />
+    <Folder Include="MASMExtentions\MASMModules\" />
   </ItemGroup>
 
   <ItemGroup>

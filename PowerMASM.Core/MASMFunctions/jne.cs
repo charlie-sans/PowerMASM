@@ -5,14 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
+using PowerMASM.Core.MASMExtentions;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class jne: ICallable {
-	public string Name => throw new NotImplementedException();
+	public string Name => "JNE";
 
-	public int ParameterCount => throw new NotImplementedException();
+	public int ParameterCount => 1;
 
 	[MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
-		throw new NotImplementedException();
-	}
+		JumpHelpers.JumpIf(state, parameters, flags => !flags.Zero);
+    }
 }

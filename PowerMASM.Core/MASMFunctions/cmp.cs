@@ -1,7 +1,8 @@
-﻿using System;
-using PowerMASM.Core;
+﻿using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
 using PowerMASM.Core.MASMExtentions;
+using PowerMASM.Core.Runtime;
+using System;
 
 namespace PowerMASM.Core.MASMFunctions;
 public class CmpInstruction : ICallable {
@@ -15,9 +16,9 @@ public class CmpInstruction : ICallable {
 			throw new ArgumentException("CMP requires exactly two operands");
 		}
 
-		long destValue = parameters[0].AsRegister(state);
-		long srcValue = parameters[1].AsRegister(state);
-		long result = destValue - srcValue;
+        var destValue = VM.ResolveOperandValue(state, parameters[0].ToString());
+        var srcValue = VM.ResolveOperandValue(state, parameters[1].ToString());
+        long result = destValue - srcValue;
 
 		state.Flags.Zero = result == 0;
 		state.Flags.Sign = result < 0;
