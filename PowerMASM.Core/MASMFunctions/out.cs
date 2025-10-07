@@ -12,11 +12,23 @@ public class Out : ICallable {
 
     public int ParameterCount => 2;
 
-    public void Call(MicroAsmVmState state, params object[] parameters) {
+    [MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
         var IOOutput = int.Parse((string)parameters[0]);
         object param = parameters[1];
         string content = null;
-
+        if (param != null) {
+            content = param.ToString();
+        }
+        if (param.ToString().StartsWith("$"))
+        {
+            // it is a memory address.
+            // read from memory until we hit a null byte \0
+            var mem = state.Memory.Span;
+            int addr = int.Parse(param.ToString().Substring(1));
+            int end = addr;
+            while (end < mem.Length && mem[end] != 0) end++;
+            content = Encoding.UTF8.GetString(mem.Slice(addr, end - addr));
+        }
         if (param is string s) {
             // Try integer register
             if (state._intRegisterMap != null && state._intRegisterMap.TryGetValue(s.ToUpper(), out var regIdx)) {
@@ -56,7 +68,8 @@ public class Out : ICallable {
         else if (param is int i) {
             content = i.ToString();
         }
-        else {
+        else
+        {
             content = param?.ToString() ?? string.Empty;
         }
         //Console.WriteLine($"[Debug] out called with IOOutput={IOOutput}, content='{content}'");

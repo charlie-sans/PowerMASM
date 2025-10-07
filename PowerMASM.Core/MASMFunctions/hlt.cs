@@ -12,7 +12,7 @@ public class hlt: ICallable {
 
 	public int ParameterCount => 0;
 
-	public void Call(MicroAsmVmState state, params object[] parameters) {
+	[MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
 		// do nothing, it's a stub anyways.
 	}
 }

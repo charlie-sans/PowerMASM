@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PowerMASM.Core;
 using PowerMASM.Core.MASMBase;
 using PowerMASM.Core.Interfaces;
+using System.Diagnostics;
 
 namespace PowerMASM.Core.Runtime;
 public class VM
@@ -42,6 +43,7 @@ public class VM
     /// trailing whitespace.</returns>
     private static List<string> SplitDataValues(string input)
     {
+        // Console.WriteLine($"SplitDataValues input: '{input}'");
         var result = new List<string>();
         var sb = new StringBuilder();
         bool inQuotes = false;
@@ -53,10 +55,14 @@ public class VM
                 inQuotes = !inQuotes;
                 sb.Append(c);
             }
-            else if (c == ',' && !inQuotes)
+            // Split on comma or space, but only outside quotes
+            else if ((c == ',' || c == ' ') && !inQuotes)
             {
-                result.Add(sb.ToString().Trim());
-                sb.Clear();
+                if (sb.Length > 0)
+                {
+                    result.Add(sb.ToString().Trim());
+                    sb.Clear();
+                }
             }
             else
             {
@@ -65,13 +71,14 @@ public class VM
         }
         if (sb.Length > 0)
             result.Add(sb.ToString().Trim());
+        // Console.WriteLine($"SplitDataValues output: [{string.Join(", ", result.Select(x => $"'{x}'"))}]");
         return result;
     }
 
     public void LoadProgram(string[]? program = null, ConsoleInWrapper? _in = null, ConsoleOutWrapper? _out = null )
     {
-        State.ConsoleIn = _in ?? null;
-        State.ConsoleOut = _out ?? null;
+        State.ConsoleIn = _in ?? new ConsoleInWrapper();
+        State.ConsoleOut = _out ?? new ConsoleOutWrapper();
 
         // --- Data label memory layout ---
         if (Program?.Labels != null)
@@ -169,13 +176,21 @@ public class VM
         }
         // Set instruction pointer (RIP) to start of program
         State.SetIntRegister("RIP", 0);
-        // Find _start or main label
-        var startLabel = Program?.Labels?.FirstOrDefault(l => l.Name == "_start")
-            ?? Program?.Labels?.FirstOrDefault(l => l.Name == "main");
-        if (startLabel != null)
-            ExecuteInstructions(startLabel.Instructions);
+        // Execute all instructions in the MASM file if available
+        if (Program?.AllInstructions != null)
+        {
+            Debug.WriteLine($"Calling ExecuteInstructions with AllInstructions (length: {Program.AllInstructions.Length})");
+            for (int i = 0; i < Math.Min(5, Program.AllInstructions.Length); i++)
+                Debug.WriteLine($"Instruction[{i}]: {Program.AllInstructions[i]}");
+            ExecuteInstructions(Program.AllInstructions);
+        }
         else if (program != null)
+        {
+            Debug.WriteLine($"Calling ExecuteInstructions with program (length: {program.Length})");
+            for (int i = 0; i < Math.Min(5, program.Length); i++)
+                Debug.WriteLine($"Instruction[{i}]: {program[i]}");
             ExecuteInstructions(program);
+        }
     }
 
     public void ExecuteInstructions(string[] instructions)
@@ -184,31 +199,74 @@ public class VM
         {
             State.ConsoleOut.WriteLine("Starting execution...");
         }
-        int ip = 0;
-        while (ip < instructions.Length)
+
+        // Debug: print total instructions
+        Debug.WriteLine($"Total instructions: {instructions.Length}");
+
+        // Build label-to-index map before execution
+        State.LabelIndices.Clear();
+        try
         {
-            var line = instructions[ip].Trim();
+            for (int i = 0; i < instructions.Length; i++)
+            {
+                var line = instructions[i].Trim();
+                Debug.WriteLine($"Processing line {i}: '{line}'");
+                if (line.StartsWith("LBL ") || line.StartsWith("lbl "))
+                {
+                    var labelName = line.Substring(4).Trim();
+                    Debug.WriteLine($"Found label '{labelName}' at instruction index {i}");
+                    // Map label to the next instruction index
+                    State.LabelIndices[labelName] = i + 1;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception in label-finding loop: {ex.Message}");
+        }
+
+        while (State.GetIntRegister("RIP") < instructions.Length)
+        {
+            var rip = (int)State.GetIntRegister("RIP");
+            var line = instructions[rip].Trim();
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith(";"))
             {
-                ip++;
+                State.SetIntRegister("RIP", rip + 1);
+                continue;
+            }
+            if (line.StartsWith("LBL "))
+            {
+                // Skip label lines during execution
+                State.SetIntRegister("RIP", rip + 1);
                 continue;
             }
             var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            // foreach (var part in parts) 
+            //     Console.WriteLine($"Part: '{part}'");
             var opcode = parts[0].ToUpperInvariant();
-            var args = parts.Skip(1).ToArray();
+            var args = SplitDataValues(line.Substring(opcode.Length).Trim()).ToArray();
             try
             {
                 var callable = _collector.GetCallableByName(opcode);
+                var originalRip = State.GetIntRegister("RIP");
                 callable.Call(State, args);
+                var newRip = State.GetIntRegister("RIP");
+                if (newRip == originalRip)
+                {
+                    State.SetIntRegister("RIP", rip + 1);
+                }
+                else
+                {
+                    continue;
+                }
             }
             catch (Exception ex)
             {
-                State.Exceptions.Add(new MASMException.MASMException($"Error executing '{line}': {ex.Message}", ip, line, ex));
+                State.Exceptions.Add(new MASMException.MASMException($"Error executing '{line}': {ex.Message}", rip, line, ex));
                 if (State.ConsoleOut != null)
                     State.ConsoleOut.WriteLine($"Error executing '{line}': {ex.Message}");
                 break;
             }
-            ip++;
         }
     }
 

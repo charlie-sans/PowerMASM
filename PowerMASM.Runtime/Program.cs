@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
+using PowerMASM.Core;
 using PowerMASM.Core.MASMBase;
 using PowerMASM.Core.Runtime;
 
@@ -11,23 +13,39 @@ namespace PowerMASM.Runtime
         public static ConsoleOutWrapper _out = new ConsoleOutWrapper();
         public static void Main(string[] args)
         {
-            Console.WriteLine("PowerMASM Runtime Environment");
-
-            string filePath = args.Length > 0 ? args[0] : "program.masm";
+            Console.WriteLine("=PowerMASM Runtime Environment=");
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Usage: PowerMASM.Runtime <path to .masm / .masi file>");
+                return;
+            }
+            string filePath = args[0];
             if (!File.Exists(filePath))
             {
                 Console.WriteLine($"File not found: {filePath}");
                 return;
             }
-            Console.WriteLine(filePath);
+            //Console.WriteLine(filePath);
             string code = File.ReadAllText(filePath);
             var masmCore = MASMCore.PreProcess(code);
 
-            var vm = new VM(32768);
+            var location = Assembly.GetExecutingAssembly().Location;
+            var conf = Path.Combine(Path.GetDirectoryName(location), "Settings.json");
+            if (File.Exists(conf))
+            {
+                var config = Config.Load(conf);
+                masmCore.Config = config;
+            }
+            else
+            {
+                Console.WriteLine("Config file not found, using default settings.");
+            }
+
+            var vm = new VM(masmCore.Config.memSize);
             vm.Program = masmCore;
       
             vm.LoadProgram(null,_in,_out);
-            Console.WriteLine("Initial VM State:");
+            //Console.WriteLine("Initial VM State:");
             //Console.WriteLine(vm.State);
             if (vm.State.Exceptions.Count > 0)
             {

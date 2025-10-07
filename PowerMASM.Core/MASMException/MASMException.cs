@@ -18,7 +18,10 @@ public class MASMException {
 	}
 	public override string ToString() {
 		var sb = new StringBuilder();
-		sb.AppendLine($"MASM Exception: {Message}");
+		sb.Append("\x1b[31m"); // Red color
+        sb.AppendLine("--------------------------------------------------");
+	
+        sb.AppendLine($"MASM Exception: {Message}");
 		if (LineNumber >= 0) {
 			sb.AppendLine($"  Line Number: {LineNumber}");
 		}
@@ -28,6 +31,8 @@ public class MASMException {
 		if (InnerException != null) {
 			sb.AppendLine($"  Inner Exception: {InnerException}");
 		}
-		return sb.ToString();
+		sb.AppendLine("--------------------------------------------------");
+		sb.Append("\x1b[0m"); // Reset color
+        return sb.ToString();
 	}
 }

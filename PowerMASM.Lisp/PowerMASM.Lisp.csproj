@@ -10,4 +10,8 @@
     <Folder Include="Examples\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PowerMASM.Runtime\PowerMASM.Runtime.csproj" />
+  </ItemGroup>
+
 </Project>

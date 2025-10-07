@@ -7,6 +7,7 @@ using PowerMASM.Core.MASMBase;
 using PowerMASM.Core.Reflection;
 using PowerMASM.Core.Runtime;
 
+
 namespace PowerMASM.Core;
 public class ProcessorFlags {
 	public bool Zero { get; set; } = false;      // Zero Flag
@@ -48,10 +49,11 @@ public class MicroAsmVmState {
 	public MASMCallStack CallStack = new();
 	public List<MASMException.MASMException> Exceptions = new();
 	public List<MASMLabel> Labels = new();
+	public Dictionary<string, int> LabelIndices { get; } = new(StringComparer.OrdinalIgnoreCase);
 
 	// Register name to index mappings
-	public Dictionary<string, int> _intRegisterMap;
-	public Dictionary<string, int> _floatRegisterMap;
+	public Dictionary<string, int> _intRegisterMap = null!;
+	public Dictionary<string, int> _floatRegisterMap = null!;
 
 	public MicroAsmVmState(int memorySize = 65536) {
 		Memory = new byte[memorySize].AsMemory();
@@ -59,8 +61,8 @@ public class MicroAsmVmState {
 		// Initialize RSP to end of memory (stack grows downward)
 		SetIntRegister("RSP", memorySize);
 	}
-
-	public void InitializeRegisterMaps() {
+    [MetaLamaExtentions.IDebuggable]
+    public void InitializeRegisterMaps() {
 		_intRegisterMap = new(StringComparer.OrdinalIgnoreCase) {
 			["RAX"] = 0,
 			["RBX"] = 1,
@@ -107,7 +109,8 @@ public class MicroAsmVmState {
 			["FP15"] = 15,
 		};
 	}
-	public void Reset() {
+	[MetaLamaExtentions.IDebuggable]
+    public void Reset() {
 		Array.Clear(_intRegisters, 0, _intRegisters.Length);
 		Array.Clear(_floatRegisters, 0, _floatRegisters.Length);
 		Flags = new ProcessorFlags();
@@ -116,22 +119,26 @@ public class MicroAsmVmState {
 		
 		Exceptions.Clear();
 		Labels.Clear();
+		LabelIndices.Clear();
     }
-
+	[MetaLamaExtentions.IDebuggable]
     public long GetIntRegister(string name) => _intRegisters[_intRegisterMap[name]];
-	public void SetIntRegister(string name, long value) => _intRegisters[_intRegisterMap[name]] = value;
-
-	public double GetFloatRegister(string name) => _floatRegisters[_floatRegisterMap[name]];
-	public void SetFloatRegister(string name, double value) => _floatRegisters[_floatRegisterMap[name]] = value;
-	public override string ToString() {
+	[MetaLamaExtentions.IDebuggable]
+    public void SetIntRegister(string name, long value) => _intRegisters[_intRegisterMap[name]] = value;
+	[MetaLamaExtentions.IDebuggable]
+    public double GetFloatRegister(string name) => _floatRegisters[_floatRegisterMap[name]];
+	[MetaLamaExtentions.IDebuggable]
+    public void SetFloatRegister(string name, double value) => _floatRegisters[_floatRegisterMap[name]] = value;
+	[MetaLamaExtentions.IDebuggable]
+    public override string ToString() {
 		var sb = new StringBuilder();
 		sb.AppendLine("Integer Registers:");
 		foreach (var reg in _intRegisterMap) {
-			sb.AppendLine($"{reg.Key}: {GetIntRegister(reg.Key)}");
+			sb.Append($"{reg.Key}: {GetIntRegister(reg.Key)},");
 		}
 		sb.AppendLine("Floating-Point Registers:");
 		foreach (var reg in _floatRegisterMap) {
-			sb.AppendLine($"{reg.Key}: {GetFloatRegister(reg.Key)}");
+			sb.Append($"{reg.Key}: {GetFloatRegister(reg.Key)},");
 		}
 		sb.AppendLine($"Flags: Z={Flags.Zero} S={Flags.Sign} O={Flags.Overflow} C={Flags.Carry}");
 		return sb.ToString();

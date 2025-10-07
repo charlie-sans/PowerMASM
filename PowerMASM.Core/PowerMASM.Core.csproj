@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Documentation\MNI\" />
+    <Folder Include="Documentation\Instructions\" />
     <Folder Include="MASMExtentions\MASMModules\MASMAttributes\" />
   </ItemGroup>
 

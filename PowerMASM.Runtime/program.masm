@@ -1,10 +1,5 @@
 lbl main
-    hello: DB "hello, world!\n", 0
     mov RAX 1
-    mov $1023 1
     mov RBX 100
-    out 0 hello
-    out 0 10
-    out 0 13
-    out 0 hello
-    ;; should print these.....
+    DB $100 "meow\n"
+    out 1 $100

@@ -13,7 +13,7 @@ public class state: ICallable {
 
 	public int ParameterCount => throw new NotImplementedException();
 
-	public void Call(MicroAsmVmState state, params object[] parameters) {
+	[MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
 		throw new NotImplementedException();
 	}
 }

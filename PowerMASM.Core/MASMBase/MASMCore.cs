@@ -11,6 +11,8 @@ namespace PowerMASM.Core.MASMBase;
 public class MASMCore
 {
     public List<string> Instructions { get; set; } = null;
+    public string[] AllInstructions { get; set; } = null; // <-- Added property
+    public Config Config { get; set; } = new Config();
     public MASMLabel[] Labels { get; set; } = null;
     public List<MASMLabel> Functions { get; set; } = null; // Store parsed fdef functions
     private MicroAsmVmState _state { get; set; } = null;
@@ -188,12 +190,13 @@ public class MASMCore
             currentLabel.Instructions = currentInstructions?.ToArray();
             labels.Add(currentLabel);
         }
-        _coreSelf = new MASMCore(false)
+        var core = new MASMCore(false)
         {
             Labels = labels.Count > 0 ? labels.ToArray() : null,
             Instructions = globalInstructions.Count > 0 ? globalInstructions : null,
             Functions = functions.Count > 0 ? functions : null
         };
-        return _coreSelf;
+        core.AllInstructions = lines; // <-- Assign all lines
+        return core;
     }
 }

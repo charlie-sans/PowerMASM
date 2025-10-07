@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PowerMASM.Core;
 using PowerMASM.Core.Interfaces;
+using PowerMASM.Core.MASMExtentions;
 
 namespace PowerMASM.Core.MASMFunctions;
-public class jnz: ICallable {
-	public string Name => throw new NotImplementedException();
+public class JnzInstruction : ICallable {
+	public string Name => "JNZ";
 
-	public int ParameterCount => throw new NotImplementedException();
+	public int ParameterCount => 1;
+	string ICallable.ToString() => Name;
 
-	public void Call(MicroAsmVmState state, params object[] parameters) {
-		throw new NotImplementedException();
+	[MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
+		JumpHelpers.JumpIf(state, parameters, flags => !flags.Zero);
 	}
 }

@@ -11,7 +11,8 @@ namespace PowerMASM.Core.MASMFunctions;
 public class and : ICallable {
 	public string Name => "and";
 	public int ParameterCount => 2;
-	public void Call(MicroAsmVmState state, params object[] parameters) {
+
+    [MetaLamaExtentions.IDebuggable] public void Call(MicroAsmVmState state, params object[] parameters) {
 		var destName = parameters[0] as string;
 		var destVal = parameters[0].AsRegister(state);
 		var srcVal = parameters[1].AsRegister(state);
